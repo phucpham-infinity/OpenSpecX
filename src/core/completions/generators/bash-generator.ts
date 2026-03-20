@@ -71,7 +71,7 @@ ${commandCases}
 }
 
 ${helpers}
-complete -F _openspec_completion openspec
+complete -F _openspec_completion openspecx
 `;
   }
 

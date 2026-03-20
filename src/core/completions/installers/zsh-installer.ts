@@ -29,14 +29,18 @@ export class ZshInstaller {
    * @returns true if Oh My Zsh is detected via $ZSH env var or directory exists
    */
   async isOhMyZshInstalled(): Promise<boolean> {
-    // First check for $ZSH environment variable (standard OMZ setup)
-    if (process.env.ZSH) {
-      return true;
-    }
-
-    // Fall back to checking for ~/.oh-my-zsh directory
     const ohMyZshPath = path.join(this.homeDir, '.oh-my-zsh');
 
+    // If $ZSH is set, only treat it as Oh My Zsh when it points to the same
+    // .oh-my-zsh directory inside this installer homeDir.
+    if (process.env.ZSH) {
+      const envOhMyZshPath = path.resolve(process.env.ZSH);
+      if (envOhMyZshPath === path.resolve(ohMyZshPath)) {
+        return true;
+      }
+    }
+
+    // Check for ~/.oh-my-zsh directory inside homeDir.
     try {
       const stat = await fs.stat(ohMyZshPath);
       return stat.isDirectory();
